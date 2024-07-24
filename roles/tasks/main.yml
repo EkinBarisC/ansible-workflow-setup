@@ -1,0 +1,122 @@
+- name: Workplace setup
+  become: yes
+
+  tasks:
+    - name: update apt
+      apt:
+        update_cache: yes
+
+    - name: install git
+      apt:
+        name: git
+        state: present
+
+    - name: install fish shell
+      apt:
+        name: fish
+        state: present
+
+    - name: install neovim
+      apt:
+        name: neovim
+        state: present
+
+    - name: install fzf
+      apt:
+        name: fzf
+        state: present
+
+    - name: install zoxide
+      shell: |
+        curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+
+    - name: install oh my posh
+      shell: |
+        curl -s https://ohmyposh.dev/install.sh | bash -s
+
+    - name: Add shell integration to fish configuration
+      block:
+        - name: Ensure fish config directory exists
+          file:
+            path: ~/.config/fish
+            state: directory
+
+        - name: Add fzf init command to config.fish
+          lineinfile:
+            path: ~/.config/fish/config.fish
+            line: "fzf --fish | source"
+            create: yes
+
+        - name: Add zoxide init command to config.fish
+          lineinfile:
+            path: ~/.config/fish/config.fish
+            line: "zoxide init --cmd cd fish | source"
+            create: yes
+
+        - name: Add oh-my-posh init command to config.fish
+          lineinfile:
+            path: ~/.config/fish/config.fish
+            line: "oh-my-posh init fish | source"
+            create: yes
+
+    - name: Ensure Neovim config directory exists
+      file:
+        path: ~/.config/nvim
+        state: directory
+
+    - name: Install lazy.nvim
+      git:
+        repo: https://github.com/folke/lazy.nvim.git
+        dest: ~/.local/share/nvim/site/pack/packer/start/lazy.nvim
+        update: no
+
+    - name: Configure Neovim to use lazy.nvim
+      block:
+        - name: Ensure Neovim configuration file exists
+          file:
+            path: ~/.config/nvim/init.lua
+            state: touch
+
+        - name: Add lazy.nvim configuration to init.lua
+          lineinfile:
+            path: ~/.config/nvim/init.lua
+            line: |
+              require('lazy').setup({
+                -- Add your plugins here
+              })
+            create: yes
+
+    - name: Download Warp terminal
+      get_url:
+        url: https://app.warp.dev/get_warp?package=deb
+        dest: /tmp/warp.deb
+
+    - name: Install Warp terminal
+      apt:
+        deb: /tmp/warp.deb
+
+    - name: Add Brave browser repository
+      apt_key:
+        url: https://brave-browser-apt-release.s3.brave.com/brave-core.asc
+        state: present
+      apt_repository:
+        repo: "deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"
+        state: present
+
+    - name: Install Brave browser
+      apt:
+        name: brave-browser
+        state: present
+
+    - name: Add Google Chrome repository
+      apt_key:
+        url: https://dl.google.com/linux/linux_signing_key.pub
+        state: present
+      apt_repository:
+        repo: "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
+        state: present
+
+    - name: Install Google Chrome
+      apt:
+        name: google-chrome-stable
+        state: present
