@@ -1,8 +1,8 @@
 - name: Workplace setup
   hosts: localhost
-  become: true
+  become: yes
 
-  block:
+  tasks:
     - name: update apt
       apt:
         update_cache: yes
@@ -99,10 +99,12 @@
       apt:
         deb: /tmp/warp.deb
 
-    - name: Add Brave browser repository
+    - name: Add Brave browser repository key
       apt_key:
         url: https://brave-browser-apt-release.s3.brave.com/brave-core.asc
         state: present
+
+    - name: Add Brave browser repository
       apt_repository:
         repo: "deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"
         state: present
@@ -112,10 +114,12 @@
         name: brave-browser
         state: present
 
-    - name: Add Google Chrome repository
+    - name: Add Google Chrome repository key
       apt_key:
         url: https://dl.google.com/linux/linux_signing_key.pub
         state: present
+
+    - name: Add Google Chrome repository
       apt_repository:
         repo: "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         state: present
