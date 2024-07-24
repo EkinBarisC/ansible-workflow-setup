@@ -1,7 +1,8 @@
 - name: Workplace setup
-  become: yes
+  hosts: localhost
+  become: true
 
-  tasks:
+  block:
     - name: update apt
       apt:
         update_cache: yes
@@ -28,11 +29,14 @@
 
     - name: install zoxide
       shell: |
-        curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
-
+        if ! command -v zoxide > /dev/null 2>&1; then
+          curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+        fi
     - name: install oh my posh
       shell: |
-        curl -s https://ohmyposh.dev/install.sh | bash -s
+        if ! command -v oh-my-posh > /dev/null 2>&1; then
+          curl -s https://ohmyposh.dev/install.sh | bash -s
+        fi
 
     - name: Add shell integration to fish configuration
       block:
