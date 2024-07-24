@@ -90,14 +90,6 @@
               })
             create: yes
 
-    - name: Download Warp terminal
-      get_url:
-        url: https://app.warp.dev/get_warp?package=deb
-        dest: /tmp/warp.deb
-
-    - name: Install Warp terminal
-      apt:
-        deb: /tmp/warp.deb
 
     - name: Add Brave browser repository key
       apt_key:
@@ -128,3 +120,38 @@
       apt:
         name: google-chrome-stable
         state: present
+
+    - name: Install LazyGit
+      shell: |
+        LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
+        curl -Lo /tmp/lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+        tar xf /tmp/lazygit.tar.gz -C /tmp lazygit
+        sudo install /tmp/lazygit /usr/local/bin
+
+    - name: install zed
+      shell: |
+        curl -f https://zed.dev/install.sh | sh
+
+    # - name: Download Warp terminal
+    #   get_url:
+    #     url: https://app.warp.dev/download?package=deb
+    #     dest: /tmp/warp.deb
+
+    # - name: Install Warp terminal
+    #   apt:
+    #     deb: /tmp/warp.deb
+
+    # - name: Add Visual Studio Code repository key
+    #   apt_key:
+    #     url: https://packages.microsoft.com/keys/microsoft.asc
+    #     state: present
+
+    # - name: Add Visual Studio Code repository
+    #   apt_repository:
+    #     repo: "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+    #     state: present
+
+    # - name: Install Visual Studio Code
+    #   apt:
+    #     name: code
+    #     state: present
