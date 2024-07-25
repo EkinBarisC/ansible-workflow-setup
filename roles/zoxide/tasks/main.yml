@@ -1,0 +1,11 @@
+- name: install zoxide
+  shell: |
+    if ! command -v zoxide > /dev/null 2>&1; then
+      curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+    fi
+
+- name: Add zoxide init command to config.fish
+  lineinfile:
+    path: ~/.config/fish/config.fish
+    line: "zoxide init --cmd cd fish | source"
+    create: yes

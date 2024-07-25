@@ -1,0 +1,8 @@
+- name: Download Warp terminal
+  get_url:
+    url: https://app.warp.dev/download?package=deb
+    dest: /tmp/warp.deb
+
+- name: Install Warp terminal
+  apt:
+    deb: /tmp/warp.deb

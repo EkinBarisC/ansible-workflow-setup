@@ -1,0 +1,11 @@
+- name: install oh my posh
+  shell: |
+    if ! command -v oh-my-posh > /dev/null 2>&1; then
+      curl -s https://ohmyposh.dev/install.sh | bash -s
+    fi
+
+- name: Add oh-my-posh init command to config.fish
+  lineinfile:
+    path: ~/.config/fish/config.fish
+    line: "oh-my-posh init fish | source"
+    create: yes

@@ -1,0 +1,10 @@
+- name: install fzf
+  apt:
+    name: fzf
+    state: present
+
+- name: Add fzf init command to config.fish
+  lineinfile:
+    path: ~/.config/fish/config.fish
+    line: "fzf --fish | source"
+    create: yes

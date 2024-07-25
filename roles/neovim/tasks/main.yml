@@ -1,0 +1,31 @@
+- name: install neovim
+  apt:
+    name: neovim
+    state: present
+
+- name: Ensure Neovim config directory exists
+  file:
+    path: ~/.config/nvim
+    state: directory
+
+- name: Install lazy.nvim
+  git:
+    repo: https://github.com/folke/lazy.nvim.git
+    dest: ~/.local/share/nvim/site/pack/packer/start/lazy.nvim
+    update: no
+
+- name: Configure Neovim to use lazy.nvim
+  block:
+    - name: Ensure Neovim configuration file exists
+      file:
+        path: ~/.config/nvim/init.lua
+        state: touch
+
+    - name: Add lazy.nvim configuration to init.lua
+      lineinfile:
+        path: ~/.config/nvim/init.lua
+        line: |
+          require('lazy').setup({
+            -- Add your plugins here
+          })
+        create: yes
